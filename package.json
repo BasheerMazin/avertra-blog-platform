@@ -6,17 +6,22 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:seed": "tsx src/server/db/seed.ts"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.2",
     "@trpc/client": "^11.6.0",
     "@trpc/react-query": "^11.6.0",
     "@trpc/server": "^11.6.0",
-    "@vercel/postgres": "^0.10.0",
     "drizzle-kit": "^0.31.5",
     "drizzle-orm": "^0.44.6",
     "next": "15.5.4",
+    "pg": "^8.11.5",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "zod": "^4.1.11"
@@ -30,6 +35,8 @@
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "tsx": "^4.19.2",
+    "typescript": "^5",
+    "dotenv": "^16.4.5"
   }
 }
