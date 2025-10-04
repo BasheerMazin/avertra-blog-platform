@@ -10,6 +10,26 @@ const credentialsSchema = zod.object({
   password: zod.string().min(6),
 });
 
+export async function credentialsAuthorize(raw: unknown) {
+  const parsed = credentialsSchema.safeParse(raw);
+  if (!parsed.success) {
+    throw new Error("Invalid credentials");
+  }
+  const { email, password } = parsed.data;
+
+  const user = await getUserByEmail(email);
+  if (!user) {
+    throw new Error("Invalid credentials");
+  }
+
+  const passwordsMatch = await bcrypt.compare(password, user.passwordHash);
+  if (!passwordsMatch) {
+    throw new Error("Invalid credentials");
+  }
+
+  return { id: user.id, email: user.email, name: user.name ?? undefined };
+}
+
 export const authOptions: NextAuthOptions = {
   secret: process.env.AUTH_SECRET,
   session: { strategy: "jwt" },
@@ -20,28 +40,7 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      authorize: async (raw) => {
-        const parsed = credentialsSchema.safeParse(raw);
-        if (!parsed.success) {
-          throw new Error("Invalid credentials");
-        }
-        const { email, password } = parsed.data;
-
-        const user = await getUserByEmail(email);
-        if (!user) {
-          throw new Error("Invalid credentials");
-        }
-
-        const passwordsMatch = await bcrypt.compare(
-          password,
-          user.passwordHash
-        );
-        if (!passwordsMatch) {
-          throw new Error("Invalid credentials");
-        }
-
-        return { id: user.id, email: user.email, name: user.name ?? undefined };
-      },
+      authorize: credentialsAuthorize,
     }),
   ],
   callbacks: {
