@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z as zod } from "zod";
 import { listPosts, createPost } from "@/server/services/posts";
 import { mapErrorToHttp } from "@/server/utils/errors";
+import { getServerAuthSession } from "@/auth";
 
 export async function GET(req: Request) {
   try {
@@ -14,7 +15,7 @@ export async function GET(req: Request) {
 
     const data = await listPosts({ limit, page });
     return NextResponse.json({ data });
-  } catch (err) {
+  } catch (err: Error | unknown) {
     const { status, message } = mapErrorToHttp(err);
     return NextResponse.json({ error: { message } }, { status });
   }
@@ -36,8 +37,8 @@ export async function POST(req: Request) {
       );
     }
 
-    // Auth placeholder
-    const userId = null as string | null;
+    const session = await getServerAuthSession();
+    const userId = session?.user?.id;
     if (!userId) {
       return NextResponse.json(
         { error: { message: "Authentication required" } },
@@ -47,7 +48,7 @@ export async function POST(req: Request) {
 
     const data = await createPost({ ...parsedResponse.data, authorId: userId });
     return NextResponse.json({ data }, { status: 201 });
-  } catch (err) {
+  } catch (err: Error | unknown) {
     const { status, message } = mapErrorToHttp(err);
     return NextResponse.json({ error: { message } }, { status });
   }

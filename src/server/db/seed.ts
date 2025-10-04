@@ -1,16 +1,19 @@
 import "dotenv/config";
 import { db, schema, pool } from "./client";
 import { and, eq } from "drizzle-orm";
+import bcrypt from "bcrypt";
 
 async function main() {
   const demoEmail = "admin@avertra.com";
+
+  const passwordHash = await bcrypt.hash("avertraAdmin123", 10);
 
   await db
     .insert(schema.users)
     .values({
       email: demoEmail,
       name: "Admin",
-      passwordHash: "__replace_me__",
+      passwordHash,
     })
     .onConflictDoNothing({ target: schema.users.email });
 

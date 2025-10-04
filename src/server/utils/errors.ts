@@ -8,7 +8,15 @@ function classifyError(error: Error | unknown): {
 } {
   const message = error instanceof Error ? error.message : "Unknown error";
   const lower = message.toLowerCase();
-  if (lower.includes("not authorized") || lower.includes("unauthorized")) {
+  if (
+    lower.includes("authentication required") ||
+    lower.includes("unauthenticated") ||
+    lower.includes("invalid credentials") ||
+    lower.includes("unauthorized")
+  ) {
+    return { code: StandardErrorCodes.UNAUTHORIZED, message };
+  }
+  if (lower.includes("not authorized") || lower.includes("forbidden")) {
     return { code: StandardErrorCodes.FORBIDDEN, message };
   }
   if (lower.includes("not found")) {
@@ -30,6 +38,8 @@ export function mapErrorToHttp(error: Error | unknown): {
 } {
   const { code, message } = classifyError(error);
   switch (code) {
+    case StandardErrorCodes.UNAUTHORIZED:
+      return { status: HttpStatusCodes.UNAUTHORIZED, message };
     case StandardErrorCodes.BAD_REQUEST:
       return { status: HttpStatusCodes.BAD_REQUEST, message };
     case StandardErrorCodes.FORBIDDEN:
@@ -44,6 +54,8 @@ export function mapErrorToHttp(error: Error | unknown): {
 export function mapErrorToTRPC(error: Error | unknown): TRPCError {
   const { code, message } = classifyError(error);
   switch (code) {
+    case StandardErrorCodes.UNAUTHORIZED:
+      return new TRPCError({ code: StandardErrorCodes.UNAUTHORIZED, message });
     case StandardErrorCodes.BAD_REQUEST:
       return new TRPCError({ code: StandardErrorCodes.BAD_REQUEST, message });
     case StandardErrorCodes.FORBIDDEN:
