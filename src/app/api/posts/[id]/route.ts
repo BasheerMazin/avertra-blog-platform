@@ -1,13 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { z as zod } from "zod";
 import { getPost, updatePost, deletePost } from "@/server/services/posts";
 import { HttpStatusCodes } from "@/constants/http";
 import { mapErrorToHttp } from "@/server/utils/errors";
 import { getServerAuthSession } from "@/auth";
 
-export async function GET(_req: Request, ctx: { params: { id: string } }) {
+type RouteContext = { params: Promise<{ id: string }> };
+
+export async function GET(_req: NextRequest, ctx: RouteContext) {
   try {
-    const id = ctx.params.id;
+    const { id } = await ctx.params;
     const post = await getPost(id);
     if (!post) {
       return NextResponse.json(
@@ -32,9 +34,9 @@ const patchSchema = zod
     message: "No fields to update",
   });
 
-export async function PATCH(req: Request, ctx: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, ctx: RouteContext) {
   try {
-    const id = ctx.params.id;
+    const { id } = await ctx.params;
     const json = await req.json().catch(() => ({}));
     const parsed = patchSchema.safeParse(json);
     if (!parsed.success) {
@@ -61,9 +63,9 @@ export async function PATCH(req: Request, ctx: { params: { id: string } }) {
   }
 }
 
-export async function DELETE(_req: Request, ctx: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, ctx: RouteContext) {
   try {
-    const id = ctx.params.id;
+    const { id } = await ctx.params;
     const session = await getServerAuthSession();
     const userId = session?.user?.id;
     if (!userId) {
