@@ -1,0 +1,34 @@
+@import "tailwindcss/preflight";
+@import "tailwindcss/theme";
+@import "tailwindcss/utilities";
+
+@theme {
+  --color-navy: #18223b;
+  --color-indigo: #24314f;
+  --color-cyan: #1fb6d9;
+  --color-cyan-tint: #25c9de38;
+  --color-mint-50: #e9f7f5;
+  --color-ink: #0f172a;
+
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-pill: 9999px;
+
+  --shadow-soft: 0 6px 24px rgba(0, 0, 0, 0.06);
+
+  --font-sans: var(--font-inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@layer base {
+  body {
+    @apply bg-mint-50 text-ink font-sans;
+  }
+}
