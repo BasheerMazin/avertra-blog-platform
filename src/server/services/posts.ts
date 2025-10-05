@@ -67,8 +67,9 @@ export async function createPost(input: {
   title: string;
   content: string;
   authorId: string;
+  published?: boolean;
 }) {
-  const { title, content, authorId } = input;
+  const { title, content, authorId, published } = input;
 
   if (typeof title !== "string" || title.trim() === "") {
     throw new Error("Title is required");
@@ -87,9 +88,15 @@ export async function createPost(input: {
     throw new Error("Author not found");
   }
 
+  if (published !== undefined && typeof published !== "boolean") {
+    throw new Error("Invalid published flag");
+  }
+
+  const publishedValue = published ?? false;
+
   const [created] = await db
     .insert(schema.posts)
-    .values({ title, content, authorId })
+    .values({ title, content, authorId, published: publishedValue })
     .returning();
 
   if (!created) {

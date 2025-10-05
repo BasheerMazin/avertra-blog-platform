@@ -9,11 +9,28 @@ export async function GET(req: Request) {
     const url = new URL(req.url);
     const limitParam = url.searchParams.get("limit");
     const pageParam = url.searchParams.get("page");
+    const authorIdParam = url.searchParams.get("authorId");
+    const publishedOnlyParam = url.searchParams.get("publishedOnly");
 
     const limit = limitParam ? Number(limitParam) : undefined;
     const page = pageParam ? Number(pageParam) : undefined;
+    const authorId = authorIdParam?.trim() ? authorIdParam.trim() : undefined;
 
-    const data = await listPosts({ limit, page });
+    let publishedOnly: boolean | undefined;
+    if (publishedOnlyParam != null) {
+      publishedOnly = publishedOnlyParam !== "false";
+    }
+
+    const session = await getServerAuthSession();
+    const sessionUserId = session?.user?.id;
+
+    if (!sessionUserId) {
+      publishedOnly = true;
+    } else if (publishedOnly === undefined) {
+      publishedOnly = false;
+    }
+
+    const data = await listPosts({ limit, page, authorId, publishedOnly });
     return NextResponse.json({ data });
   } catch (err: Error | unknown) {
     const { status, message } = mapErrorToHttp(err);
@@ -24,6 +41,7 @@ export async function GET(req: Request) {
 const createBodySchema = zod.object({
   title: zod.string().min(1),
   content: zod.string().min(1),
+  published: zod.boolean().optional(),
 });
 
 export async function POST(req: Request) {
