@@ -20,7 +20,9 @@ services:
       retries: 20
 
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     container_name: avertra_app
     restart: unless-stopped
     depends_on:
