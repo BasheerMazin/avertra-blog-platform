@@ -6,10 +6,6 @@ on:
       - main
   workflow_dispatch:
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-
 permissions:
   contents: read
   packages: write
@@ -17,6 +13,10 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: ${{ github.repository }}
+      VERCEL_DEPLOY_HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -52,9 +52,9 @@ jobs:
             DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder
 
       - name: Trigger Vercel deploy hook
-        if: ${{ secrets.VERCEL_DEPLOY_HOOK_URL != '' }}
+        if: ${{ env.VERCEL_DEPLOY_HOOK_URL != '' }}
         env:
-          DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+          DEPLOY_HOOK: ${{ env.VERCEL_DEPLOY_HOOK_URL }}
         run: |
           http_code=$(curl -s -o /tmp/vercel-response.txt -w "%{http_code}" -X POST "$DEPLOY_HOOK")
           cat /tmp/vercel-response.txt
