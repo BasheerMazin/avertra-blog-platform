@@ -2,6 +2,10 @@
 
 This technical assessment showcases fullstack development skills with a UI inspired by Avertra's public visual identity.
 
+## Live Demo
+
+- Production: https://avertra-blog-platform-pb9pmu8xp-basheers-projects-a718c4e7.vercel.app/
+
 ## Requirements Checklist
 
 - [x] Use React and Next.js for the frontend, leveraging Next.js 15 App Router with React 19 components.
