@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Poppins } from "next/font/google";
 import type { ReactNode } from "react";
 
 import { Navbar } from "@/components/Navbar";
 
 import "./globals.css";
 
-const inter = Inter({
+const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "600", "700"],
-  variable: "--font-inter",
+  variable: "--font-poppins",
   display: "swap",
 });
 
@@ -21,7 +21,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} bg-mint-50 text-ink antialiased`}>
+      <body
+        className={`${poppins.className} ${poppins.variable} bg-mint-50 text-ink antialiased`}
+      >
         <div className="flex min-h-screen flex-col">
           <Navbar />
           <main className="flex-1">

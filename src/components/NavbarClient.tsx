@@ -43,6 +43,21 @@ export function NavbarClient({ userLabel }: NavbarClientProps) {
           />
         </Link>
 
+        <nav className="flex items-center gap-6">
+          <Link
+            href="/"
+            className="text-2xl font-medium text-navy hover:text-indigo"
+          >
+            Home
+          </Link>
+          <Link
+            href="/posts/manage"
+            className="text-2xl font-medium text-navy hover:text-indigo"
+          >
+            My posts
+          </Link>
+        </nav>
+
         {userLabel ? (
           <div className="flex items-center gap-4">
             <span className="text-sm font-medium text-navy">{userLabel}</span>

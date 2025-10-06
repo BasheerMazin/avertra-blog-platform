@@ -32,11 +32,19 @@ export default async function ManagePostsPage({
   const session = await getServerAuthSession();
   const userId = session?.user?.id;
 
-  if (!userId) {
-    redirect("/signin");
-  }
-
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
+
+  if (!userId) {
+    const rawPage = resolvedSearchParams?.page;
+    const parsedPage = Array.isArray(rawPage) ? rawPage[0] : rawPage;
+    const pageParam = Number.isFinite(Number(parsedPage))
+      ? Math.max(1, Number(parsedPage))
+      : 1;
+    const callbackPath =
+      pageParam > 1 ? `/posts/manage?page=${pageParam}` : "/posts/manage";
+    const params = new URLSearchParams({ callbackUrl: callbackPath });
+    redirect(`/signin?${params.toString()}`);
+  }
 
   const rawPage = resolvedSearchParams?.page;
   const parsedPage = Array.isArray(rawPage) ? rawPage[0] : rawPage;

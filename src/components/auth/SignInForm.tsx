@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { type ChangeEvent, type FormEvent, useCallback, useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 
 export function SignInForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<{
@@ -62,7 +63,10 @@ export function SignInForm() {
           return;
         }
 
-        router.replace("/");
+        const rawCallback = searchParams.get("callbackUrl");
+        const target =
+          rawCallback && rawCallback.startsWith("/") ? rawCallback : "/";
+        router.replace(target);
         router.refresh();
       } catch {
         setError("Unable to sign in right now. Please try again");
@@ -70,7 +74,7 @@ export function SignInForm() {
         setIsSubmitting(false);
       }
     },
-    [router]
+    [router, searchParams]
   );
 
   const handleChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
