@@ -28,15 +28,12 @@ type HomePageSearchParams = {
 export default async function HomePage({
   searchParams,
 }: {
-  searchParams?: Promise<HomePageSearchParams> | HomePageSearchParams;
+  searchParams?: Promise<HomePageSearchParams>;
 }) {
   const session = await getServerAuthSession();
   const isLoggedIn = Boolean(session?.user?.id);
 
-  const resolvedSearchParams =
-    typeof searchParams === "object" && "then" in (searchParams as object)
-      ? await (searchParams as Promise<HomePageSearchParams>)
-      : (searchParams as HomePageSearchParams | undefined);
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
 
   const rawPage = resolvedSearchParams?.page;
   const parsedPage = Array.isArray(rawPage) ? rawPage[0] : rawPage;

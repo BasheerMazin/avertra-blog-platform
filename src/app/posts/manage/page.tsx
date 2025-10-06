@@ -27,7 +27,7 @@ type ManageSearchParams = {
 export default async function ManagePostsPage({
   searchParams,
 }: {
-  searchParams?: Promise<ManageSearchParams> | ManageSearchParams;
+  searchParams?: Promise<ManageSearchParams>;
 }) {
   const session = await getServerAuthSession();
   const userId = session?.user?.id;
@@ -36,10 +36,7 @@ export default async function ManagePostsPage({
     redirect("/signin");
   }
 
-  const resolvedSearchParams =
-    typeof searchParams === "object" && "then" in (searchParams as object)
-      ? await (searchParams as Promise<ManageSearchParams>)
-      : (searchParams as ManageSearchParams | undefined);
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
 
   const rawPage = resolvedSearchParams?.page;
   const parsedPage = Array.isArray(rawPage) ? rawPage[0] : rawPage;
