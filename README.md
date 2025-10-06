@@ -21,7 +21,7 @@ This technical assessment showcases fullstack development skills with a UI inspi
 - [x] Responsive design powered by Tailwind CSS breakpoints across layouts and components.
 - [x] Serverless-style backend functions using Next.js Route Handlers under `src/app/api`.
 - [ ] Additional social features such as comments, categories, or likes (available for future iterations).
-- [x] Dockerized setup via `Dockerfile` and `docker-compose.yml` for local orchestration.
+- [x] Dockerized setup via `Dockerfile.dev` and `docker-compose.yml` for local orchestration.
 
 ## Features
 
@@ -153,9 +153,8 @@ The `posts` router mirrors the REST capabilities with type-safe procedures:
 
 ## Docker Workflow
 
-Two Docker recipes are available:
+Local Docker setup is available:
 
-- `Dockerfile` builds a multi-stage production image suited for pushing to registries such as GitHub Container Registry or deploying as a Vercel Container project.
 - `Dockerfile.dev` for local development and is referenced by `docker-compose.yml`.
 
 ### Local development (docker-compose)
@@ -178,13 +177,11 @@ docker-compose down
 
 Add `-v` to drop the persisted database volume if you need a clean slate.
 
-### GitHub Actions deployment pipeline
+### Deployment
 
-A GitHub Actions workflow (`.github/workflows/deploy.yml`) builds and pushes the container to GHCR on each push to `main` (or on manual dispatch). Configure the following repository secret before enabling it:
+- Connect the repository to Vercel and set `DATABASE_URL` and `AUTH_SECRET` in the Vercel Project Environment Variables.
+- Vercel will automatically build and deploy on pushes to `main`; no GitHub Actions deploy workflow is required.
 
-- `VERCEL_DEPLOY_HOOK_URL` – the Deploy Hook URL from your Vercel Container project.
-
-The workflow logs in to GHCR using the built-in `GITHUB_TOKEN`, publishes tags for the branch and commit SHA, and triggers the Vercel hook once the image push succeeds.
 
 ## Useful npm Scripts
 

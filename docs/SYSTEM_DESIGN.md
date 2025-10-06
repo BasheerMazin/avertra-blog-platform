@@ -19,7 +19,7 @@
 - **API layer:** RESTful endpoints under `app/api/**` delegate business logic to shared service modules, keeping the handlers thin and stateless.
 - **Authentication:** NextAuth (credentials provider) manages user authentication and sessions. The helper `getServerAuthSession` provides access to session data within server components and route handlers.
 - **tRPC (optional):** Mirrors the REST layer for future typed client interactions without duplicating business logic.
-- **Containerization:** A multi-stage production `Dockerfile` builds the Next.js bundle with a configurable `DATABASE_URL` build arg, while `Dockerfile.dev` plus docker-compose keep the auto-migrate dev experience alongside Postgres.
+- **Containerization:** `Dockerfile.dev` with docker-compose supports local development alongside Postgres. Production builds are handled by Vercel from the repository source.
 
 ---
 
@@ -75,7 +75,7 @@
 - **Zod validation:** Provides structured input validation and clear error responses at API boundaries.
 - **JWT sessions (NextAuth):** Secure and stateless session handling using httpOnly cookies.
 - **Dockerized setup:** Makes local, CI, and production environments identical and easy to run.
-- **Build-time configuration:** The container build supplies a `DATABASE_URL` build arg (placeholder by default) so `next build` can prerender pages without leaking production credentials.
+- **Build-time configuration:** Provide required environment variables (`DATABASE_URL`, `AUTH_SECRET`). For Vercel, configure these in Project Settings; for local Docker, use `.env.docker` and compose environment variables.
 - **Local state with hooks:** Manages client-side interactions (form state, optimistic UI) without a dedicated global store; router refreshes keep the UI aligned with server data.
 - **Database client singleton:** `src/server/db/client.ts` instantiates the Postgres pool and Drizzle client once at module scope so every request reuses the same connection objects, following the singleton pattern.
 
@@ -84,7 +84,7 @@
 ## 5. Operational Notes
 
 - **Environment Variables:**  
-  `DATABASE_URL`, `AUTH_SECRET`, optional `VERCEL_DEPLOY_HOOK_URL` for CI-driven deploys.
-- **CI/CD:** GitHub Actions `ci.yml` runs linting and Vitest coverage, while `deploy.yml` builds/pushes the container to GHCR and pings Vercel via the deploy hook secret.
+  `DATABASE_URL`, `AUTH_SECRET`.
+- **CI/CD:** GitHub Actions `ci.yml` runs linting and Vitest coverage. Deployments are handled by Vercel via the GitHub integration on pushes to `main`; no separate deploy workflow is required.
 - **Monitoring:** Local development relies on Next.js logging; database performance can be inspected via Drizzle queries and Postgres tools.
 - **Testing:** Vitest covers service functions, authentication utilities, UI components, and tRPC routers. Postman collections are available for manual API verification.
