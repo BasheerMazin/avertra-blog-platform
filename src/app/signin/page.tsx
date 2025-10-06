@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import { SignInForm } from "@/components/auth/SignInForm";
 
@@ -22,7 +23,9 @@ export default function SignInPage() {
             </h1>
           </div>
           <div className="mt-8">
-            <SignInForm />
+            <Suspense fallback={null}>
+              <SignInForm />
+            </Suspense>
           </div>
         </div>
       </div>
