@@ -4,7 +4,7 @@ This technical assessment showcases fullstack development skills with a UI inspi
 
 ## Live Demo
 
-- Production: https://avertra-blog-platform-pb9pmu8xp-basheers-projects-a718c4e7.vercel.app/
+- Production: https://avertra-blog-platform.vercel.app
 
 ## Requirements Checklist
 
